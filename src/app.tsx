@@ -23,7 +23,7 @@ export const App = () => {
 
   return (
     <>
-      <div className="flex h-screen w-screen bg-gray-800">
+      <div className="flex h-screen w-screen">
         <section className="flex h-full w-full flex-col items-center my-16 mx-64">
           <h1 className="text-3xl font-semibold text-white mb-8">
             AI Template Builder
@@ -35,12 +35,22 @@ export const App = () => {
           <textarea
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            onSelect={(e) => handleSelect(e)}
-            className="p-8 border text-white border-gray-400 w-full h-full rounded-lg"
+            onSelect={handleSelect}
+            className="p-8 border text-white border-gray-400 w-[800px] h-[700px] rounded-lg"
           />
         </section>
       </div>
-      {confirmationPopup && <div>Confirmation popup {highlightedText}</div>}
+      {confirmationPopup && (
+        <div className="absolute top-0 flex h-full w-full items-center justify-center">
+          <div className="bg-white">
+            Would you like to add <span>{highlightedText}</span> as a parameter?
+            <div>
+              <button type="button">Yes</button>
+              <button type="button">No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
