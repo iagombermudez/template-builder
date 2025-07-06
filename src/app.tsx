@@ -21,6 +21,13 @@ export const App = () => {
     }
   };
 
+  // When we choose not to add the highlighted text to the list of tokens
+  // we should reset the highlighted text and close the popup
+  const cancelConfirmation = () => {
+    setHighlightedText("");
+    setConfirmationPopup(false);
+  };
+
   return (
     <>
       <div className="flex h-screen w-screen">
@@ -57,6 +64,7 @@ export const App = () => {
               </button>
               <button
                 type="button"
+                onClick={cancelConfirmation}
                 className="h-10 w-28 rounded border border-[#333333] bg-[#0C0C0C] text-white hover:border-white"
               >
                 No
