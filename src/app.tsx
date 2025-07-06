@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export const App = () => {
   const [code, setCode] = useState("");
+  const [tokens, setTokens] = useState<string[]>([]);
   const [highlightedText, setHighlightedText] = useState("");
 
   const [confirmationPopup, setConfirmationPopup] = useState<boolean>(false);
@@ -19,6 +20,15 @@ export const App = () => {
     if (selected.length > 0) {
       setConfirmationPopup(true);
     }
+  };
+
+  // When we accept the highlighted text to be added to the list of tokens
+  // we should add it to the list of tokens, reset the highlighted text
+  // and close the popup
+  const acceptConfirmation = () => {
+    setTokens([...tokens, highlightedText]);
+    setHighlightedText("");
+    setConfirmationPopup(false);
   };
 
   // When we choose not to add the highlighted text to the list of tokens
@@ -58,6 +68,7 @@ export const App = () => {
             <div className="flex w-full items-center justify-center gap-4">
               <button
                 type="button"
+                onClick={acceptConfirmation}
                 className="h-10 w-28 rounded bg-white text-black hover:bg-[#ccc]"
               >
                 Yes
