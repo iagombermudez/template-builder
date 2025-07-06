@@ -24,11 +24,11 @@ export const App = () => {
   return (
     <>
       <div className="flex h-screen w-screen">
-        <section className="flex h-full w-full flex-col items-center my-16 mx-64">
-          <h1 className="text-3xl font-semibold text-white mb-8">
+        <section className="mx-64 my-16 flex h-full w-full flex-col items-center">
+          <h1 className="mb-8 text-3xl font-semibold text-white">
             AI Template Builder
           </h1>
-          <h2 className="text-white text-lg">
+          <h2 className="text-lg text-white">
             Paste your code, highlight the names you would like to parameterize
             and BOOM!
           </h2>
@@ -36,17 +36,31 @@ export const App = () => {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             onSelect={handleSelect}
-            className="p-8 border text-white border-gray-400 w-[800px] h-[700px] rounded-lg"
+            className="h-[700px] w-[800px] rounded-2xl border border-gray-400 p-8 text-white"
           />
         </section>
       </div>
       {confirmationPopup && (
         <div className="absolute top-0 flex h-full w-full items-center justify-center">
-          <div className="bg-white">
-            Would you like to add <span>{highlightedText}</span> as a parameter?
-            <div>
-              <button type="button">Yes</button>
-              <button type="button">No</button>
+          <div className="rounded-2xl border border-[#333333] bg-[#0C0C0C] px-16 py-8">
+            <h3 className="mb-4">
+              Would you like to add{" "}
+              <span className="font-bold italic">{highlightedText}</span> as a
+              parameter?
+            </h3>
+            <div className="flex w-full items-center justify-center gap-4">
+              <button
+                type="button"
+                className="h-10 w-28 rounded bg-white text-black hover:bg-[#ccc]"
+              >
+                Yes
+              </button>
+              <button
+                type="button"
+                className="h-10 w-28 rounded border border-[#333333] bg-[#0C0C0C] text-white hover:border-white"
+              >
+                No
+              </button>
             </div>
           </div>
         </div>
