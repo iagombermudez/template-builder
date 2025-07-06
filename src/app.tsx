@@ -1,7 +1,32 @@
 import { useState } from "react";
 
 export const App = () => {
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(`<div className="flex h-screen w-screen">
+        <section className="absolute top-0 left-0 my-16 ml-16">
+          <h3 className="mb-8 text-xl font-semibold text-white">Tokens</h3>
+          <ul>
+            {tokens.map((token, index) => (
+              <li key={index}>{token}</li>
+            ))}
+          </ul>
+        </section>
+        <section className="mx-64 my-16 flex h-full w-full flex-col items-center">
+          <h1 className="mb-8 text-3xl font-semibold text-white">
+            AI Template Builder
+          </h1>
+          <h2 className="text-lg text-white">
+            Paste your code, highlight the names you would like to parameterize
+            and BOOM!
+          </h2>
+          <textarea
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            onSelect={handleSelect}
+            className="h-[700px] w-[800px] rounded-2xl border border-gray-400 p-8 text-white"
+          />
+        </section>
+      </div>`);
+
   const [tokens, setTokens] = useState<string[]>([]);
   const [highlightedText, setHighlightedText] = useState("");
 
@@ -41,6 +66,14 @@ export const App = () => {
   return (
     <>
       <div className="flex h-screen w-screen">
+        <section className="absolute top-0 left-0 my-16 ml-16">
+          <h3 className="mb-8 text-xl font-semibold text-white">Tokens</h3>
+          <ul>
+            {tokens.map((token, index) => (
+              <li key={index}>{token}</li>
+            ))}
+          </ul>
+        </section>
         <section className="mx-64 my-16 flex h-full w-full flex-col items-center">
           <h1 className="mb-8 text-3xl font-semibold text-white">
             AI Template Builder
