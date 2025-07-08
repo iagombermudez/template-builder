@@ -2,6 +2,7 @@ import { useState, type JSX } from "react";
 import type {
   BuilderParameter,
   TextSelection,
+  TextSelectionPosition,
 } from "./template-builder-page.types";
 
 export const useTemplateBuilderPageHooks = () => {
@@ -34,9 +35,7 @@ export const useTemplateBuilderPageHooks = () => {
   const [highlightedText, setHighlightedText] = useState<
     TextSelection | undefined
   >(undefined);
-  const [builderParameters, setBuilderParameters] = useState<
-    Array<BuilderParameter>
-  >([]);
+  const [parameters, setParameters] = useState<Array<BuilderParameter>>([]);
 
   const [confirmationPopup, setConfirmationPopup] = useState<boolean>(false);
 
@@ -64,10 +63,7 @@ export const useTemplateBuilderPageHooks = () => {
   // and close the popup
   const acceptConfirmation = () => {
     if (highlightedText) {
-      setBuilderParameters([
-        ...builderParameters,
-        { selections: [highlightedText] },
-      ]);
+      setParameters([...parameters, { selections: [highlightedText] }]);
     }
     setHighlightedText(undefined);
     setConfirmationPopup(false);
@@ -81,19 +77,52 @@ export const useTemplateBuilderPageHooks = () => {
   };
 
   // Build a node that contains all the text given by the user. Every term that
-  // the user added as parameter should be highlighted using a <span> tag. This
-  // functions should return only one ReactNode that will be rendered.
+  // the user added as parameter should be highlighted using a <span> tag.
+  // To highlight this strings, we will use the positions stored for each element.
+  // We should:
+  // 1) Sort the positions. This step is crucial to be able to build the string again succesfully
+  // 2) For each position. We should:
+  //  2.1) If it's the first one, we should make sure to append all the text that came
+  //       before as a normal string. (Only if there was text that came before)
+  //  2.2) For each position, append a <span> tag including the text in that position
+  //  2.3) If it's the first or in the middle, we should append the rest of string
+  //       until the next position as a normal string
+  //  2.4) If it's the last one, we should do the same as in the first one, but appending the end
+  //       instead of the beginning
+  // This function should return only one ReactNode that will be rendered.
   const buildHighlightedCode = (): JSX.Element => {
+    const positionsToHighlight: Array<TextSelectionPosition> = parameters
+      .flatMap((p) => p.selections.map((s) => s.position))
+      .sort((p1, p2) => p1.start - p2.start);
+    const nodes: Array<JSX.Element | string> = [];
+    for (const [i, position] of positionsToHighlight.entries()) {
+      if (i === 0 && position.start > 0) {
+        nodes.push(code.substring(0, position.start));
+      }
+      nodes.push(
+        <span className="bg-yellow-500">
+          {code.substring(position.start, position.end)}
+        </span>,
+      );
+      if (i == positionsToHighlight.length - 1) {
+        nodes.push(code.substring(position.end, code.length));
+      } else {
+        const nextPosition = positionsToHighlight[i + 1];
+        nodes.push(code.substring(position.end, nextPosition.start));
+      }
+    }
     return (
-      <div className="h-[700px] w-[800px] rounded-2xl border border-gray-400 p-8 whitespace-pre text-white"></div>
+      <div className="h-[700px] w-[500px] overflow-auto rounded-2xl border border-gray-400 p-8 whitespace-pre text-white">
+        {nodes.map((node) => node)}
+      </div>
     );
   };
 
   return {
     code,
     setCode,
-    builderParameters,
-    setBuilderParameters,
+    builderParameters: parameters,
+    setBuilderParameters: setParameters,
     confirmationPopup,
     acceptConfirmation,
     cancelConfirmation,

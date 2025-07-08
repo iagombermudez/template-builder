@@ -4,8 +4,10 @@ export type BuilderParameter = {
 
 export type TextSelection = {
   text: string;
-  position: {
-    start: number;
-    end: number;
-  };
+  position: TextSelectionPosition;
+};
+
+export type TextSelectionPosition = {
+  start: number;
+  end: number;
 };

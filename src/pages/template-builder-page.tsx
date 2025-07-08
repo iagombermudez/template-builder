@@ -41,13 +41,15 @@ export const TemplateBuilderPage = () => {
             Paste your code, highlight the names you would like to parameterize
             and BOOM!
           </h2>
-          <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            onSelect={handleSelect}
-            className="mb-8 min-h-[700px] w-[800px] rounded-2xl border border-gray-400 p-8 text-white"
-          />
-          {buildHighlightedCode()}
+          <div className="flex gap-4">
+            <textarea
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              onSelect={handleSelect}
+              className="mb-8 min-h-[700px] w-[500px] rounded-2xl border border-gray-400 p-8 text-white"
+            />
+            {buildHighlightedCode()}
+          </div>
         </section>
       </div>
       {confirmationPopup && (
