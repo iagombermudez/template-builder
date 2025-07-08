@@ -19,14 +19,12 @@ export const TemplateBuilderPage = () => {
         <section className="absolute top-0 left-0 my-16 ml-16">
           <h3 className="mb-8 text-xl font-semibold text-white">Tokens</h3>
           <ul>
-            {parameters.map((parameter, index) => (
-              <li key={index}>
-                <span className="font-semibold underline">
-                  Parameter ${index}
-                </span>
+            {parameters.map((parameter, i) => (
+              <li key={i}>
+                <span className="font-semibold underline">Parameter ${i}</span>
                 <ul className="ml-4">
-                  {parameter.selections.map((selection) => (
-                    <li>{selection.text}</li>
+                  {parameter.selections.map((selection, j) => (
+                    <li key={`list-parameters-${i}-${j}`}>{selection.text}</li>
                   ))}
                 </ul>
               </li>

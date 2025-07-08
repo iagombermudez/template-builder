@@ -100,7 +100,7 @@ export const useTemplateBuilderPageHooks = () => {
         nodes.push(code.substring(0, position.start));
       }
       nodes.push(
-        <span className="bg-yellow-500">
+        <span key={`highlight-${position.start}`} className="bg-yellow-500">
           {code.substring(position.start, position.end)}
         </span>,
       );
