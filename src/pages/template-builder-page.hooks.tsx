@@ -1,4 +1,8 @@
 import { useState, type JSX } from "react";
+import type {
+  BuilderParameter,
+  TextSelection,
+} from "./template-builder-page.types";
 
 export const useTemplateBuilderPageHooks = () => {
   const [code, setCode] = useState(`<div className="flex h-screen w-screen">
@@ -27,8 +31,12 @@ export const useTemplateBuilderPageHooks = () => {
         </section>
       </div>`);
 
-  const [tokens, setTokens] = useState<string[]>([]);
-  const [highlightedText, setHighlightedText] = useState("");
+  const [highlightedText, setHighlightedText] = useState<
+    TextSelection | undefined
+  >(undefined);
+  const [builderParameters, setBuilderParameters] = useState<
+    Array<BuilderParameter>
+  >([]);
 
   const [confirmationPopup, setConfirmationPopup] = useState<boolean>(false);
 
@@ -39,11 +47,14 @@ export const useTemplateBuilderPageHooks = () => {
   const handleSelect = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
     const start = (e.target as HTMLTextAreaElement).selectionStart;
     const end = (e.target as HTMLTextAreaElement).selectionEnd;
-    const selected = code.substring(start, end);
-    setHighlightedText(selected);
+    const selectedText = code.substring(start, end);
+    setHighlightedText({
+      text: selectedText,
+      position: { start, end },
+    });
 
     //Open the popup if any text has actually been selected
-    if (selected.length > 0) {
+    if (selectedText.length > 0) {
       setConfirmationPopup(true);
     }
   };
@@ -52,15 +63,20 @@ export const useTemplateBuilderPageHooks = () => {
   // we should add it to the list of tokens, reset the highlighted text
   // and close the popup
   const acceptConfirmation = () => {
-    setTokens([...tokens, highlightedText]);
-    setHighlightedText("");
+    if (highlightedText) {
+      setBuilderParameters([
+        ...builderParameters,
+        { selections: [highlightedText] },
+      ]);
+    }
+    setHighlightedText(undefined);
     setConfirmationPopup(false);
   };
 
   // When we choose not to add the highlighted text to the list of tokens
   // we should reset the highlighted text and close the popup
   const cancelConfirmation = () => {
-    setHighlightedText("");
+    setHighlightedText(undefined);
     setConfirmationPopup(false);
   };
 
@@ -76,8 +92,8 @@ export const useTemplateBuilderPageHooks = () => {
   return {
     code,
     setCode,
-    tokens,
-    setTokens,
+    builderParameters,
+    setBuilderParameters,
     confirmationPopup,
     acceptConfirmation,
     cancelConfirmation,

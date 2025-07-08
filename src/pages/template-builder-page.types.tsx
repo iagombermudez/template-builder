@@ -1,9 +1,11 @@
-type TokenPosition = {
-  start: number;
-  end: number;
+export type BuilderParameter = {
+  selections: Array<TextSelection>;
 };
 
-export type Token = {
-  token: string;
-  positions: Array<TokenPosition>;
+export type TextSelection = {
+  text: string;
+  position: {
+    start: number;
+    end: number;
+  };
 };

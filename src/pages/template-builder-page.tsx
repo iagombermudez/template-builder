@@ -4,7 +4,7 @@ export const TemplateBuilderPage = () => {
   const {
     code,
     setCode,
-    tokens,
+    builderParameters,
     confirmationPopup,
     handleSelect,
     highlightedText,
@@ -19,8 +19,8 @@ export const TemplateBuilderPage = () => {
         <section className="absolute top-0 left-0 my-16 ml-16">
           <h3 className="mb-8 text-xl font-semibold text-white">Tokens</h3>
           <ul>
-            {tokens.map((token, index) => (
-              <li key={index}>{token}</li>
+            {builderParameters.map((parameter, index) => (
+              <li key={index}>Parameter ${index}</li>
             ))}
           </ul>
         </section>
@@ -46,8 +46,8 @@ export const TemplateBuilderPage = () => {
           <div className="rounded-2xl border border-[#333333] bg-[#0C0C0C] px-16 py-8">
             <h3 className="mb-4">
               Would you like to add{" "}
-              <span className="font-bold italic">{highlightedText}</span> as a
-              parameter?
+              <span className="font-bold italic">{highlightedText?.text}</span>{" "}
+              as a parameter?
             </h3>
             <div className="flex w-full items-center justify-center gap-4">
               <button
