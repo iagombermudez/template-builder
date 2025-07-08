@@ -9,8 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-  "prettier":{
-    "plugins": ["prettier-plugin-tailwindcss"]
+  "prettier": {
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",

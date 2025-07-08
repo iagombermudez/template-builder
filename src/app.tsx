@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type JSX, type Key } from "react";
 
 export const App = () => {
   const [code, setCode] = useState(`<div className="flex h-screen w-screen">
@@ -63,6 +63,16 @@ export const App = () => {
     setConfirmationPopup(false);
   };
 
+  // Build a node that contains all the text given by the user. Every term that
+  // the user added as parameter should be highlighted using a <span> tag. This
+  // functions should return only one ReactNode that will be rendered.
+  const buildHighlightedCode = (): JSX.Element => {
+    return (
+      <div className="h-[700px] w-[800px] rounded-2xl border border-gray-400 p-8 whitespace-pre text-white"></div>
+    );
+  };
+  buildHighlightedCode();
+
   return (
     <>
       <div className="flex h-screen w-screen">
@@ -86,8 +96,9 @@ export const App = () => {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             onSelect={handleSelect}
-            className="h-[700px] w-[800px] rounded-2xl border border-gray-400 p-8 text-white"
+            className="mb-8 min-h-[700px] w-[800px] rounded-2xl border border-gray-400 p-8 text-white"
           />
+          {buildHighlightedCode()}
         </section>
       </div>
       {confirmationPopup && (
