@@ -58,12 +58,12 @@ export const useTemplateBuilderPageHooks = () => {
     }
   };
 
-  // When we accept the highlighted text to be added to the list of tokens
-  // we should add it to the list of tokens, reset the highlighted text
-  // and close the popup
-  const acceptConfirmation = () => {
+  // When adding a new parameter, we need to reset the highlighted text
+  // as well as closing the popup
+  const addNewParameter = () => {
     if (highlightedText) {
-      setParameters([...parameters, { selections: [highlightedText] }]);
+      const newParameter = { selections: [highlightedText] };
+      setParameters([...parameters, newParameter]);
     }
     setHighlightedText(undefined);
     setConfirmationPopup(false);
@@ -121,10 +121,10 @@ export const useTemplateBuilderPageHooks = () => {
   return {
     code,
     setCode,
-    builderParameters: parameters,
-    setBuilderParameters: setParameters,
+    parameters,
+    setParameters,
     confirmationPopup,
-    acceptConfirmation,
+    addNewParameter,
     cancelConfirmation,
     highlightedText,
     buildHighlightedCode,

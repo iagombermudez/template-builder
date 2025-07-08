@@ -4,12 +4,12 @@ export const TemplateBuilderPage = () => {
   const {
     code,
     setCode,
-    builderParameters,
+    parameters,
     confirmationPopup,
     handleSelect,
     highlightedText,
     buildHighlightedCode,
-    acceptConfirmation,
+    addNewParameter,
     cancelConfirmation,
   } = useTemplateBuilderPageHooks();
 
@@ -19,7 +19,7 @@ export const TemplateBuilderPage = () => {
         <section className="absolute top-0 left-0 my-16 ml-16">
           <h3 className="mb-8 text-xl font-semibold text-white">Tokens</h3>
           <ul>
-            {builderParameters.map((parameter, index) => (
+            {parameters.map((parameter, index) => (
               <li key={index}>
                 <span className="font-semibold underline">
                   Parameter ${index}
@@ -55,25 +55,26 @@ export const TemplateBuilderPage = () => {
       {confirmationPopup && (
         <div className="absolute top-0 flex h-full w-full items-center justify-center">
           <div className="rounded-2xl border border-[#333333] bg-[#0C0C0C] px-16 py-8">
-            <h3 className="mb-4">
+            <h3 className="mb-2">
               Would you like to add{" "}
               <span className="font-bold italic">{highlightedText?.text}</span>{" "}
               as a parameter?
             </h3>
+            <ul className="mb-4 ml-4 list-disc">
+              {parameters.map((_, i) => (
+                <li className="cursor-pointer">Parameter ${i}</li>
+              ))}
+              <li className="cursor-pointer" onClick={addNewParameter}>
+                New Parameter
+              </li>
+            </ul>
             <div className="flex w-full items-center justify-center gap-4">
-              <button
-                type="button"
-                onClick={acceptConfirmation}
-                className="h-10 w-28 rounded bg-white text-black hover:bg-[#ccc]"
-              >
-                Yes
-              </button>
               <button
                 type="button"
                 onClick={cancelConfirmation}
                 className="h-10 w-28 rounded border border-[#333333] bg-[#0C0C0C] text-white hover:border-white"
               >
-                No
+                Cancel
               </button>
             </div>
           </div>
