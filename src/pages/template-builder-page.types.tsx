@@ -1,4 +1,5 @@
 export type BuilderParameter = {
+  color: HexColor;
   selections: Array<TextSelection>;
 };
 
@@ -11,3 +12,5 @@ export type TextSelectionPosition = {
   start: number;
   end: number;
 };
+
+export type HexColor = `#${string}`;

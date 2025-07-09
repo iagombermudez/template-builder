@@ -1,6 +1,7 @@
 import { useState, type JSX } from "react";
 import type {
   BuilderParameter,
+  HexColor,
   TextSelection,
   TextSelectionPosition,
 } from "./template-builder-page.types";
@@ -106,8 +107,23 @@ export const useTemplateBuilderPageHooks = () => {
             ...parameters.slice(parameterIndex + 1),
           ];
         })()
-      : //If there is no parameter index, we are creating a new parameter
-        [...parameters, { selections: [highlightedText] }];
+      : (() =>
+          //If there is no parameter index, we are creating a new parameter
+          [
+            ...parameters,
+            { color: randomColor(), selections: [highlightedText] },
+          ])();
+  };
+
+  // Generates a random color in Hex format
+  // The color generated should be bright enough to be visible on a dark background
+  const randomColor = (): HexColor => {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color as HexColor;
   };
 
   // When we choose not to add the highlighted text to the list of tokens
@@ -132,24 +148,39 @@ export const useTemplateBuilderPageHooks = () => {
   //       instead of the beginning
   // This function should return only one ReactNode that will be rendered.
   const buildHighlightedCode = (): JSX.Element => {
-    const positionsToHighlight: Array<TextSelectionPosition> = parameters
-      .flatMap((p) => p.selections.map((s) => s.position))
-      .sort((p1, p2) => p1.start - p2.start);
+    const highlights: Array<{
+      color: HexColor;
+      position: TextSelectionPosition;
+    }> = parameters
+      .flatMap((p) =>
+        p.selections.map((s) => ({
+          color: p.color,
+          position: s.position,
+        })),
+      )
+      .sort((p1, p2) => p1.position.start - p2.position.start);
     const nodes: Array<JSX.Element | string> = [];
-    for (const [i, position] of positionsToHighlight.entries()) {
-      if (i === 0 && position.start > 0) {
-        nodes.push(code.substring(0, position.start));
+    for (const [i, highlight] of highlights.entries()) {
+      if (i === 0 && highlight.position.start > 0) {
+        nodes.push(code.substring(0, highlight.position.start));
       }
       nodes.push(
-        <span key={`highlight-${position.start}`} className="bg-yellow-500">
-          {code.substring(position.start, position.end)}
+        <span
+          key={`highlight-${highlight.position.start}`}
+          style={{
+            background: highlight.color,
+          }}
+        >
+          {code.substring(highlight.position.start, highlight.position.end)}
         </span>,
       );
-      if (i == positionsToHighlight.length - 1) {
-        nodes.push(code.substring(position.end, code.length));
+      if (i == highlights.length - 1) {
+        nodes.push(code.substring(highlight.position.end, code.length));
       } else {
-        const nextPosition = positionsToHighlight[i + 1];
-        nodes.push(code.substring(position.end, nextPosition.start));
+        const nextPosition = highlights[i + 1];
+        nodes.push(
+          code.substring(highlight.position.end, nextPosition.position.start),
+        );
       }
     }
     return (
