@@ -69,7 +69,7 @@ export const TemplateBuilderPage = () => {
               ))}
               <li
                 className="cursor-pointer"
-                onClick={() => confirmAddNewChunk()}
+                onClick={() => confirmAddNewChunk()} //Not passing the parameter index, since we are creating a new parameter
               >
                 New Parameter
               </li>

@@ -69,28 +69,45 @@ export const useTemplateBuilderPageHooks = () => {
   // as well as closing the popup
   const confirmAddNewChunk = (parameterIndex?: number) => {
     if (!highlightedText) return;
-    if (parameterIndex !== undefined) {
-      //TODO: handle this 2 errors instead of returning directly
-      if (parameterIndex < 0) return;
-      if (parameterIndex >= parameters.length) return;
-
-      const existingParameter = parameters[parameterIndex];
-      setParameters([
-        ...parameters.slice(0, parameterIndex),
-        {
-          ...existingParameter,
-          selections: [...existingParameter.selections, highlightedText],
-        },
-        ...parameters.slice(parameterIndex + 1),
-      ]);
-    } else {
-      //If there is no parameter index, we are creating a new parameter
-      setParameters([...parameters, { selections: [highlightedText] }]);
+    try {
+      const newParameters = buildNewParameters(parameterIndex, highlightedText);
+      setParameters(newParameters);
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        alert("There was an unexpected error:\n " + error?.message);
+      }
+    } finally {
+      //Reset the highlighted text and close the popup
+      setHighlightedText(undefined);
+      setConfirmationPopup(false);
     }
+  };
 
-    //Reset the highlighted text and close the popup
-    setHighlightedText(undefined);
-    setConfirmationPopup(false);
+  // We need to pass highlightedText to this function to assure it's defined
+  const buildNewParameters = (
+    parameterIndex: number | undefined,
+    highlightedText: TextSelection,
+  ): Array<BuilderParameter> => {
+    return parameterIndex !== undefined
+      ? (() => {
+          //If there is a parameter index, we are adding the highlighted text to an existing parameter
+          if (parameterIndex < 0 || parameterIndex > parameters.length) {
+            // Throw if index is out of bounds
+            throw new Error("Parameter index out of bounds");
+          }
+          const existingParameter = parameters[parameterIndex];
+          return [
+            ...parameters.slice(0, parameterIndex),
+            {
+              ...existingParameter,
+              selections: [...existingParameter.selections, highlightedText],
+            },
+            ...parameters.slice(parameterIndex + 1),
+          ];
+        })()
+      : //If there is no parameter index, we are creating a new parameter
+        [...parameters, { selections: [highlightedText] }];
   };
 
   // When we choose not to add the highlighted text to the list of tokens
