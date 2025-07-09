@@ -9,7 +9,7 @@ export const TemplateBuilderPage = () => {
     handleSelect,
     highlightedText,
     buildHighlightedCode,
-    addNewParameter,
+    confirmAddNewChunk,
     cancelConfirmation,
   } = useTemplateBuilderPageHooks();
 
@@ -60,9 +60,17 @@ export const TemplateBuilderPage = () => {
             </h3>
             <ul className="mb-4 ml-4 list-disc">
               {parameters.map((_, i) => (
-                <li className="cursor-pointer">Parameter ${i}</li>
+                <li
+                  className="cursor-pointer"
+                  onClick={() => confirmAddNewChunk(i)}
+                >
+                  Parameter ${i}
+                </li>
               ))}
-              <li className="cursor-pointer" onClick={addNewParameter}>
+              <li
+                className="cursor-pointer"
+                onClick={() => confirmAddNewChunk()}
+              >
                 New Parameter
               </li>
             </ul>

@@ -58,13 +58,37 @@ export const useTemplateBuilderPageHooks = () => {
     }
   };
 
-  // When adding a new parameter, we need to reset the highlighted text
+  // In order to confirm that a chunk is added, the user must select
+  // between adding the chunk to a new parameter or adding it to a new
+  // parameter.
+  // When the user selects to add it to an existing parameter, we simply
+  // append it at the ened of the selections array.
+  // When the user selects to add it to a NEW parameter, we need to create
+  // this new parameter and initialze it to include the new chunk
+  // Finally, we need to reset the highlighted text
   // as well as closing the popup
-  const addNewParameter = () => {
-    if (highlightedText) {
-      const newParameter = { selections: [highlightedText] };
-      setParameters([...parameters, newParameter]);
+  const confirmAddNewChunk = (parameterIndex?: number) => {
+    if (!highlightedText) return;
+    if (parameterIndex !== undefined) {
+      //TODO: handle this 2 errors instead of returning directly
+      if (parameterIndex < 0) return;
+      if (parameterIndex >= parameters.length) return;
+
+      const existingParameter = parameters[parameterIndex];
+      setParameters([
+        ...parameters.slice(0, parameterIndex),
+        {
+          ...existingParameter,
+          selections: [...existingParameter.selections, highlightedText],
+        },
+        ...parameters.slice(parameterIndex + 1),
+      ]);
+    } else {
+      //If there is no parameter index, we are creating a new parameter
+      setParameters([...parameters, { selections: [highlightedText] }]);
     }
+
+    //Reset the highlighted text and close the popup
     setHighlightedText(undefined);
     setConfirmationPopup(false);
   };
@@ -124,7 +148,7 @@ export const useTemplateBuilderPageHooks = () => {
     parameters,
     setParameters,
     confirmationPopup,
-    addNewParameter,
+    confirmAddNewChunk,
     cancelConfirmation,
     highlightedText,
     buildHighlightedCode,
