@@ -15,6 +15,7 @@ export const TemplateBuilderPage = () => {
     templateCreatedPopup,
     openTemplateCreatedPopup,
     closeTemplateCreatedPopup,
+    copyTemplateScriptToClipboard,
   } = useTemplateBuilderPageHooks();
 
   return (
@@ -97,6 +98,7 @@ export const TemplateBuilderPage = () => {
           </div>
         </div>
       )}
+
       {templateCreatedPopup && (
         <div className="absolute top-0 flex h-full w-full items-center justify-center">
           <div className="rounded-2xl border border-[#333333] bg-[#0C0C0C] px-16 py-8">
@@ -105,7 +107,14 @@ export const TemplateBuilderPage = () => {
             </h3>
 
             <p className="mb-2 text-lg">Copy the following script</p>
-            <div className="mb-4 max-h-96 overflow-y-auto rounded border border-[#ccc] bg-black p-4 font-mono whitespace-pre">
+            <div className="relative mb-4 max-h-96 overflow-y-auto rounded border border-[#ccc] bg-black p-4 font-mono whitespace-pre">
+              <button
+                type="button"
+                className="absolute top-2 right-2 h-fit w-fit cursor-pointer rounded border border-[#333333] bg-[#0C0C0C] p-2 text-white hover:border-white"
+                onClick={copyTemplateScriptToClipboard}
+              >
+                Copy to clipboard
+              </button>
               {template?.script}
             </div>
 

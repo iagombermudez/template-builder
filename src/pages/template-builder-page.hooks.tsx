@@ -226,7 +226,7 @@ export const useTemplateBuilderPageHooks = () => {
     let parsedCode = code;
     let characterOffset = 0;
     for (const highlight of highlights) {
-      const bashParameter = `$${highlight.parameterNumber}`;
+      const bashParameter = `$\{${highlight.parameterNumber}}`;
       parsedCode =
         parsedCode.substring(0, highlight.start - characterOffset) +
         bashParameter +
@@ -234,10 +234,19 @@ export const useTemplateBuilderPageHooks = () => {
       characterOffset += highlight.end - highlight.start - bashParameter.length;
     }
 
+    //Escape all quotations
+    parsedCode = parsedCode.replaceAll('"', '\\"');
+    parsedCode = parsedCode.replaceAll("'", "\\'");
     return {
-      script: parsedCode,
-      usage: `sh ./script ${parameters.map((_, index) => "$" + index).join(" ")}`,
+      script: `printf "${parsedCode}"`,
+      usage: `sh ./script ${parameters.map((_, index) => `$${index}`).join(" ")}`,
     };
+  };
+
+  const copyTemplateScriptToClipboard = async () => {
+    if (template) {
+      await navigator.clipboard.writeText(template.script);
+    }
   };
 
   const openTemplateCreatedPopup = () => {
@@ -268,5 +277,6 @@ export const useTemplateBuilderPageHooks = () => {
     templateCreatedPopup,
     openTemplateCreatedPopup,
     closeTemplateCreatedPopup,
+    copyTemplateScriptToClipboard,
   };
 };
