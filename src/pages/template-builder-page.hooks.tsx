@@ -197,9 +197,38 @@ export const useTemplateBuilderPageHooks = () => {
     );
   };
 
+  // In order to generate the template script, we will need to substitute all the
+  // selected highlights for it's corresponding params. Example: this_is_a_highlight -> $1
+  // To achieve this, we will substitute each highlight in order of first to last position.
+  // Since we are reducing the ammount of text every time we parse a highlight to a parameter
+  // we will need to keep track of how many characters we have removed, taking into account that
+  // we are also adding extra characters ($1, $22, $12313, etc.)
   const generateTemplateScript = () => {
-    console.log("---- BASH SCRIPT ");
-    console.log(code);
+    const highlights: Array<{
+      parameterNumber: number;
+      start: TextSelectionPosition["start"];
+      end: TextSelectionPosition["end"];
+    }> = parameters
+      .flatMap((p, index) =>
+        p.selections.map((s) => ({
+          parameterNumber: index,
+          start: s.position.start,
+          end: s.position.end,
+        })),
+      )
+      .sort((p1, p2) => p1.start - p2.start);
+
+    let parsedCode = code;
+    let characterOffset = 0;
+    for (const highlight of highlights) {
+      const bashParameter = `$${highlight.parameterNumber}`;
+      parsedCode =
+        parsedCode.substring(0, highlight.start - characterOffset) +
+        bashParameter +
+        parsedCode.substring(highlight.end - characterOffset);
+      characterOffset += highlight.end - highlight.start - bashParameter.length;
+    }
+    console.log(parsedCode);
   };
 
   return {
