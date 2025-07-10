@@ -11,11 +11,12 @@ export const TemplateBuilderPage = () => {
     buildHighlightedCode,
     confirmAddNewChunk,
     cancelConfirmation,
+    generateTemplateScript,
   } = useTemplateBuilderPageHooks();
 
   return (
     <>
-      <div className="flex h-screen w-screen">
+      <div className="my-16 flex h-screen w-screen justify-center">
         <section className="absolute top-0 left-0 my-16 ml-16">
           <h3 className="mb-8 text-xl font-semibold text-white">Tokens</h3>
           <ul>
@@ -31,7 +32,7 @@ export const TemplateBuilderPage = () => {
             ))}
           </ul>
         </section>
-        <section className="mx-64 my-16 flex h-full w-full flex-col items-center">
+        <section className="flex flex-col items-center">
           <h1 className="mb-8 text-3xl font-semibold text-white">
             AI Template Builder
           </h1>
@@ -49,6 +50,13 @@ export const TemplateBuilderPage = () => {
             {buildHighlightedCode()}
           </div>
         </section>
+        <button
+          type="button"
+          onClick={generateTemplateScript}
+          className="h-10 w-28 cursor-pointer rounded bg-white text-black hover:bg-gray-200"
+        >
+          Generate
+        </button>
       </div>
       {confirmationPopup && (
         <div className="absolute top-0 flex h-full w-full items-center justify-center">

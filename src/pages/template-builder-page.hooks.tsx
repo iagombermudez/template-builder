@@ -197,6 +197,11 @@ export const useTemplateBuilderPageHooks = () => {
     );
   };
 
+  const generateTemplateScript = () => {
+    console.log("---- BASH SCRIPT ");
+    console.log(code);
+  };
+
   return {
     code,
     setCode,
@@ -208,5 +213,6 @@ export const useTemplateBuilderPageHooks = () => {
     highlightedText,
     buildHighlightedCode,
     handleSelect,
+    generateTemplateScript,
   };
 };
