@@ -167,10 +167,17 @@ export const useTemplateBuilderPageHooks = () => {
       nodes.push(
         <span
           key={`highlight-${highlight.position.start}`}
-          style={{
-            background: highlight.color,
-          }}
+          className="relative"
         >
+          {/* This div is used to add the highlight color. This is necessary because we are 
+              adding a little bit of padding to the highlight. If it was added directly in the span,
+              the text position would be affected*/}
+          <div
+            style={{
+              background: highlight.color,
+            }}
+            className="absolute top-0 -left-0.5 -z-10 h-full w-[calc(100%+4px)] rounded"
+          />
           {code.substring(highlight.position.start, highlight.position.end)}
         </span>,
       );
