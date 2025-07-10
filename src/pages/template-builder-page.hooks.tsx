@@ -1,4 +1,4 @@
-import { useState, type JSX } from "react";
+import { useRef, useState, type JSX } from "react";
 import type {
   BuilderParameter,
   HexColor,
@@ -152,7 +152,7 @@ export const useTemplateBuilderPageHooks = () => {
   //  2.4) If it's the last one, we should do the same as in the first one, but appending the end
   //       instead of the beginning
   // This function should return only one ReactNode that will be rendered.
-  const buildHighlightedCode = (): JSX.Element => {
+  const buildHighlightedCode = (): Array<JSX.Element | string> => {
     const highlights: Array<{
       color: HexColor;
       position: TextSelectionPosition;
@@ -195,11 +195,7 @@ export const useTemplateBuilderPageHooks = () => {
         );
       }
     }
-    return (
-      <div className="pointer-events-none absolute h-[700px] w-[1000px] overflow-auto rounded-2xl border border-gray-400 p-8 font-mono whitespace-pre text-transparent">
-        {nodes.map((node) => node)}
-      </div>
-    );
+    return nodes.map((node) => node);
   };
 
   // In order to generate the template script, we will need to substitute all the
@@ -278,5 +274,27 @@ export const useTemplateBuilderPageHooks = () => {
     openTemplateCreatedPopup,
     closeTemplateCreatedPopup,
     copyTemplateScriptToClipboard,
+  };
+};
+
+export const useSynchronizeScrolls = () => {
+  const elementToSyncRef = useRef<HTMLDivElement>(null);
+
+  // This function should be assigned in the `onScroll` method of the element
+  // that will be scrolled. For now, this only works for textareas, as this is
+  // the only use case in the application and overengineering is ~no bueno~.
+  // The other element will not need any functions.
+  // This will sync both
+  // - horizontal scroll (scrollLeft)
+  // - vertical scroll (scrollTop)
+  const syncScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    if (elementToSyncRef?.current) {
+      elementToSyncRef.current.scrollTop = e.currentTarget.scrollTop;
+      elementToSyncRef.current.scrollLeft = e.currentTarget.scrollLeft;
+    }
+  };
+  return {
+    syncScroll,
+    synchingElementRef: elementToSyncRef,
   };
 };

@@ -1,4 +1,7 @@
-import { useTemplateBuilderPageHooks } from "./template-builder-page.hooks";
+import {
+  useSynchronizeScrolls,
+  useTemplateBuilderPageHooks,
+} from "./template-builder-page.hooks";
 
 export const TemplateBuilderPage = () => {
   const {
@@ -18,9 +21,11 @@ export const TemplateBuilderPage = () => {
     copyTemplateScriptToClipboard,
   } = useTemplateBuilderPageHooks();
 
+  const { syncScroll, synchingElementRef } = useSynchronizeScrolls();
+
   return (
     <>
-      <div className="my-16 flex h-screen w-screen justify-center">
+      <div className="my-8 flex h-screen w-screen justify-center">
         <section className="absolute top-0 left-0 my-16 ml-16 w-fit">
           <h3 className="mb-8 text-xl font-semibold text-white">Tokens</h3>
           <ul>
@@ -45,12 +50,18 @@ export const TemplateBuilderPage = () => {
             and BOOM!
           </h2>
           <div className="relative flex gap-4">
-            {buildHighlightedCode()}
+            <div
+              ref={synchingElementRef}
+              className="pointer-events-none absolute h-[700px] w-[1000px] overflow-auto rounded-2xl border border-gray-400 p-8 font-mono whitespace-pre text-transparent"
+            >
+              {buildHighlightedCode()}
+            </div>
             <textarea
               value={code}
+              onScroll={syncScroll}
               onChange={(e) => setCode(e.target.value)}
               onSelect={handleSelect}
-              className="mb-8 min-h-[700px] w-[1000px] rounded-2xl border border-gray-400 p-8 font-mono text-white"
+              className="mb-8 min-h-[700px] w-[1000px] overflow-auto rounded-2xl border border-gray-400 p-8 font-mono text-nowrap text-white"
             />
           </div>
         </section>
