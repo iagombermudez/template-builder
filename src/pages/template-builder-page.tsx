@@ -44,7 +44,7 @@ export const TemplateBuilderPage = () => {
               value={code}
               onChange={(e) => setCode(e.target.value)}
               onSelect={handleSelect}
-              className="mb-8 min-h-[700px] w-[500px] rounded-2xl border border-gray-400 p-8 text-white"
+              className="mb-8 min-h-[700px] w-[500px] rounded-2xl border border-gray-400 p-8 font-mono text-white"
             />
             {buildHighlightedCode()}
           </div>

@@ -191,7 +191,7 @@ export const useTemplateBuilderPageHooks = () => {
       }
     }
     return (
-      <div className="h-[700px] w-[500px] overflow-auto rounded-2xl border border-gray-400 p-8 whitespace-pre text-white">
+      <div className="h-[700px] w-[500px] overflow-auto rounded-2xl border border-gray-400 p-8 font-mono whitespace-pre text-white">
         {nodes.map((node) => node)}
       </div>
     );
