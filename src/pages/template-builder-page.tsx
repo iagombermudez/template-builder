@@ -21,7 +21,7 @@ export const TemplateBuilderPage = () => {
   return (
     <>
       <div className="my-16 flex h-screen w-screen justify-center">
-        <section className="absolute top-0 left-0 my-16 ml-16">
+        <section className="absolute top-0 left-0 my-16 ml-16 w-fit">
           <h3 className="mb-8 text-xl font-semibold text-white">Tokens</h3>
           <ul>
             {parameters.map((parameter, i) => (
@@ -44,14 +44,14 @@ export const TemplateBuilderPage = () => {
             Paste your code, highlight the names you would like to parameterize
             and BOOM!
           </h2>
-          <div className="flex gap-4">
+          <div className="relative flex gap-4">
+            {buildHighlightedCode()}
             <textarea
               value={code}
               onChange={(e) => setCode(e.target.value)}
               onSelect={handleSelect}
-              className="mb-8 min-h-[700px] w-[500px] rounded-2xl border border-gray-400 p-8 font-mono text-white"
+              className="mb-8 min-h-[700px] w-[1000px] rounded-2xl border border-gray-400 p-8 font-mono text-white"
             />
-            {buildHighlightedCode()}
           </div>
         </section>
         <button
