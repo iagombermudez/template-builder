@@ -11,7 +11,10 @@ export const TemplateBuilderPage = () => {
     buildHighlightedCode,
     confirmAddNewChunk,
     cancelConfirmation,
-    generateTemplateScript,
+    template,
+    templateCreatedPopup,
+    openTemplateCreatedPopup,
+    closeTemplateCreatedPopup,
   } = useTemplateBuilderPageHooks();
 
   return (
@@ -52,7 +55,7 @@ export const TemplateBuilderPage = () => {
         </section>
         <button
           type="button"
-          onClick={generateTemplateScript}
+          onClick={openTemplateCreatedPopup}
           className="h-10 w-28 cursor-pointer rounded bg-white text-black hover:bg-gray-200"
         >
           Generate
@@ -86,11 +89,38 @@ export const TemplateBuilderPage = () => {
               <button
                 type="button"
                 onClick={cancelConfirmation}
-                className="h-10 w-28 rounded border border-[#333333] bg-[#0C0C0C] text-white hover:border-white"
+                className="h-10 w-28 cursor-pointer rounded border border-[#333333] bg-[#0C0C0C] text-white hover:border-white"
               >
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {templateCreatedPopup && (
+        <div className="absolute top-0 flex h-full w-full items-center justify-center">
+          <div className="rounded-2xl border border-[#333333] bg-[#0C0C0C] px-16 py-8">
+            <h3 className="mb-2 text-center text-xl font-bold">
+              Template Created!!
+            </h3>
+
+            <p className="mb-2 text-lg">Copy the following script</p>
+            <div className="mb-4 max-h-96 overflow-y-auto rounded border border-[#ccc] bg-black p-4 font-mono whitespace-pre">
+              {template?.script}
+            </div>
+
+            <p className="mb-2 text-lg">Usage</p>
+            <div className="mb-4 rounded border border-[#ccc] bg-black p-4 font-mono whitespace-pre">
+              {template?.usage}
+            </div>
+
+            <button
+              type="button"
+              onClick={closeTemplateCreatedPopup}
+              className="h-10 w-28 cursor-pointer rounded border border-[#333333] bg-[#0C0C0C] text-white hover:border-white"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

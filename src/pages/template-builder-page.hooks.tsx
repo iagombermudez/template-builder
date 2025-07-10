@@ -2,6 +2,7 @@ import { useState, type JSX } from "react";
 import type {
   BuilderParameter,
   HexColor,
+  Template,
   TextSelection,
   TextSelectionPosition,
 } from "./template-builder-page.types";
@@ -40,6 +41,10 @@ export const useTemplateBuilderPageHooks = () => {
 
   const [confirmationPopup, setConfirmationPopup] = useState<boolean>(false);
 
+  // Template popup variables
+  const [template, setTemplate] = useState<Template | undefined>(undefined);
+  const [templateCreatedPopup, setTemplateCreatedPopup] =
+    useState<boolean>(false);
   // Detect when a text selection has ended. After the text selection
   // has ended, a new popup should be opened that asks the user to confirm
   // if the selected text should be added to the list of tokens that will be build
@@ -203,7 +208,7 @@ export const useTemplateBuilderPageHooks = () => {
   // Since we are reducing the ammount of text every time we parse a highlight to a parameter
   // we will need to keep track of how many characters we have removed, taking into account that
   // we are also adding extra characters ($1, $22, $12313, etc.)
-  const generateTemplateScript = () => {
+  const generateTemplateScript = (): Template => {
     const highlights: Array<{
       parameterNumber: number;
       start: TextSelectionPosition["start"];
@@ -228,7 +233,23 @@ export const useTemplateBuilderPageHooks = () => {
         parsedCode.substring(highlight.end - characterOffset);
       characterOffset += highlight.end - highlight.start - bashParameter.length;
     }
-    console.log(parsedCode);
+
+    return {
+      script: parsedCode,
+      usage: `sh ./script ${parameters.map((_, index) => "$" + index).join(" ")}`,
+    };
+  };
+
+  const openTemplateCreatedPopup = () => {
+    const generatedTemplate = generateTemplateScript();
+    setTemplate(generatedTemplate);
+    setTemplateCreatedPopup(true);
+  };
+
+  // When closing the template created popup, we need to reset the template state
+  const closeTemplateCreatedPopup = () => {
+    setTemplate(undefined);
+    setTemplateCreatedPopup(false);
   };
 
   return {
@@ -243,5 +264,9 @@ export const useTemplateBuilderPageHooks = () => {
     buildHighlightedCode,
     handleSelect,
     generateTemplateScript,
+    template,
+    templateCreatedPopup,
+    openTemplateCreatedPopup,
+    closeTemplateCreatedPopup,
   };
 };
