@@ -1,4 +1,5 @@
 import { useRef, useState, type JSX } from "react";
+import { Highlight } from "./components/highligh";
 import type {
   BuilderParameter,
   HexColor,
@@ -136,68 +137,72 @@ export const useTemplateBuilderPageHooks = () => {
   //       instead of the beginning
   // This function should return only one ReactNode that will be rendered.
   const buildHighlightedCode = (): Array<JSX.Element | string> => {
-    const highlights: Array<
-      | {
-          type: "parameter";
-          color: HexColor;
-          position: TextSelectionPosition;
-        }
-      | {
-          type: "potential-parameter";
-          position: TextSelectionPosition;
-        }
-    > = parameters.flatMap((p) =>
+    type ParameterHighlight =
+      | ExistingParameterHighlight
+      | PotencialParameterHighlight;
+    type ExistingParameterHighlight = {
+      type: "existing-parameter";
+      color: HexColor;
+      position: TextSelectionPosition;
+    };
+    type PotencialParameterHighlight = {
+      type: "potential-parameter";
+      position: TextSelectionPosition;
+    };
+    const highlights: Array<ParameterHighlight> = parameters.flatMap((p) =>
       p.selections.map((s) => ({
-        type: "parameter",
+        type: "existing-parameter",
         color: p.color,
         position: s.position,
       })),
     );
 
-    //Add the current text highlighted by the user in order to show the 'add highlight button'
+    // Add the current text highlighted by the user in order to show the 'add highlight button'
     if (highlightedText) {
       highlights.push({
         type: "potential-parameter",
         position: highlightedText.position,
       });
     }
+
+    // Sorting the highlights by appearence is necessary because we will be appending parts
+    // of the texts to the beginning and the end of each highlight.
     highlights.sort((p1, p2) => p1.position.start - p2.position.start);
 
     const nodes: Array<JSX.Element | string> = [];
     for (const [i, highlight] of highlights.entries()) {
+      // Append text before the highlight
       if (i === 0 && highlight.position.start > 0) {
         nodes.push(code.substring(0, highlight.position.start));
       }
-      if (highlight.type === "parameter") {
-        nodes.push(
-          <span
-            key={`highlight-${highlight.position.start}`}
-            className="relative"
-          >
-            {/* This div is used to add the highlight color. This is necessary because we are 
-              adding a little bit of padding to the highlight. If it was added directly in the span,
-              the text position would be affected
-            */}
-            <div
-              style={{
-                background: highlight.color,
-              }}
-              className="absolute -top-0.5 -left-0.5 -z-10 h-full w-[calc(100%+4px)] rounded"
-            />
-            ) {code.substring(highlight.position.start, highlight.position.end)}
-          </span>,
-        );
+
+      // Append the highlight (or show add highlight button)
+      const highlightText = code.substring(
+        highlight.position.start,
+        highlight.position.end,
+      );
+      switch (highlight.type) {
+        case "existing-parameter":
+          nodes.push(
+            <Highlight
+              key={`highlight-${highlight.position.start}`}
+              color={highlight.color}
+              text={highlightText}
+            />,
+          );
+          break;
+        case "potential-parameter": {
+          nodes.push(
+            <button className="absolute left-0 h-8 w-8 -translate-y-1 cursor-pointer rounded bg-white text-black">
+              +
+            </button>,
+          );
+          nodes.push(highlightText);
+          break;
+        }
       }
-      if (highlight.type === "potential-parameter") {
-        nodes.push(
-          <button className="absolute left-0 h-8 w-8 -translate-y-1 cursor-pointer rounded bg-white text-black">
-            +
-          </button>,
-        );
-        nodes.push(
-          code.substring(highlight.position.start, highlight.position.end),
-        );
-      }
+
+      // Append text after the highlight
       if (i == highlights.length - 1) {
         nodes.push(code.substring(highlight.position.end, code.length));
       } else {
@@ -207,7 +212,7 @@ export const useTemplateBuilderPageHooks = () => {
         );
       }
     }
-    return nodes.map((node) => node);
+    return nodes;
   };
 
   // In order to generate the template script, we will need to substitute all the
