@@ -266,11 +266,31 @@ export const useTemplateBuilderPageHooks = () => {
   //    * Since only one part of the text can be modified at each time, checking the
   //      position of the first difference between the original and the new text should
   //      suffice
+  // With that information, we need to find all the tokens after the first difference (or within
+  // distance based on the difference of characters) and subtract the difference of characters
   const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newCode = e.target.value;
     const differenceOfCharacters = newCode.length - code.length;
     const firstDifferenceIndex = findFirstDifference(code, newCode);
-    console.log(differenceOfCharacters, firstDifferenceIndex);
+    const newParameters = parameters.map((parameter) => ({
+      ...parameter,
+      selections: parameter.selections.map((selection) => ({
+        ...selection,
+        position: {
+          start:
+            selection.position.start > firstDifferenceIndex
+              ? selection.position.start + differenceOfCharacters
+              : selection.position.start,
+          end:
+            selection.position.end > firstDifferenceIndex ||
+            (selection.position.end >= firstDifferenceIndex &&
+              differenceOfCharacters > 0)
+              ? selection.position.end + differenceOfCharacters
+              : selection.position.end,
+        },
+      })),
+    }));
+    setParameters(newParameters);
     setCode(e.target.value);
   };
 
