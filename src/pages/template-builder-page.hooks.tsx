@@ -46,24 +46,6 @@ export const useTemplateBuilderPageHooks = () => {
   const [template, setTemplate] = useState<Template | undefined>(undefined);
   const [templateCreatedPopup, setTemplateCreatedPopup] =
     useState<boolean>(false);
-  // Detect when a text selection has ended. After the text selection
-  // has ended, a new popup should be opened that asks the user to confirm
-  // if the selected text should be added to the list of tokens that will be build
-  // in the template
-  const handleSelect = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-    const start = (e.target as HTMLTextAreaElement).selectionStart;
-    const end = (e.target as HTMLTextAreaElement).selectionEnd;
-    const selectedText = code.substring(start, end);
-    setHighlightedText({
-      text: selectedText,
-      position: { start, end },
-    });
-
-    //Open the popup if any text has actually been selected
-    if (selectedText.length > 0) {
-      setConfirmationPopup(true);
-    }
-  };
 
   // In order to confirm that a chunk is added, the user must select
   // between adding the chunk to a new parameter or adding it to a new
@@ -154,39 +136,68 @@ export const useTemplateBuilderPageHooks = () => {
   //       instead of the beginning
   // This function should return only one ReactNode that will be rendered.
   const buildHighlightedCode = (): Array<JSX.Element | string> => {
-    const highlights: Array<{
-      color: HexColor;
-      position: TextSelectionPosition;
-    }> = parameters
-      .flatMap((p) =>
-        p.selections.map((s) => ({
-          color: p.color,
-          position: s.position,
-        })),
-      )
-      .sort((p1, p2) => p1.position.start - p2.position.start);
+    const highlights: Array<
+      | {
+          type: "parameter";
+          color: HexColor;
+          position: TextSelectionPosition;
+        }
+      | {
+          type: "potential-parameter";
+          position: TextSelectionPosition;
+        }
+    > = parameters.flatMap((p) =>
+      p.selections.map((s) => ({
+        type: "parameter",
+        color: p.color,
+        position: s.position,
+      })),
+    );
+
+    //Add the current text highlighted by the user in order to show the 'add highlight button'
+    if (highlightedText) {
+      highlights.push({
+        type: "potential-parameter",
+        position: highlightedText.position,
+      });
+    }
+    highlights.sort((p1, p2) => p1.position.start - p2.position.start);
+
     const nodes: Array<JSX.Element | string> = [];
     for (const [i, highlight] of highlights.entries()) {
       if (i === 0 && highlight.position.start > 0) {
         nodes.push(code.substring(0, highlight.position.start));
       }
-      nodes.push(
-        <span
-          key={`highlight-${highlight.position.start}`}
-          className="relative"
-        >
-          {/* This div is used to add the highlight color. This is necessary because we are 
+      if (highlight.type === "parameter") {
+        nodes.push(
+          <span
+            key={`highlight-${highlight.position.start}`}
+            className="relative"
+          >
+            {/* This div is used to add the highlight color. This is necessary because we are 
               adding a little bit of padding to the highlight. If it was added directly in the span,
-              the text position would be affected*/}
-          <div
-            style={{
-              background: highlight.color,
-            }}
-            className="absolute -top-0.5 -left-0.5 -z-10 h-full w-[calc(100%+4px)] rounded"
-          />
-          {code.substring(highlight.position.start, highlight.position.end)}
-        </span>,
-      );
+              the text position would be affected
+            */}
+            <div
+              style={{
+                background: highlight.color,
+              }}
+              className="absolute -top-0.5 -left-0.5 -z-10 h-full w-[calc(100%+4px)] rounded"
+            />
+            ) {code.substring(highlight.position.start, highlight.position.end)}
+          </span>,
+        );
+      }
+      if (highlight.type === "potential-parameter") {
+        nodes.push(
+          <button className="absolute left-0 h-8 w-8 -translate-y-1 cursor-pointer rounded bg-white text-black">
+            +
+          </button>,
+        );
+        nodes.push(
+          code.substring(highlight.position.start, highlight.position.end),
+        );
+      }
       if (i == highlights.length - 1) {
         nodes.push(code.substring(highlight.position.end, code.length));
       } else {
@@ -254,6 +265,28 @@ export const useTemplateBuilderPageHooks = () => {
 
   //Handlers
   //-----------------------------------------------------------------------
+
+  // Detect when a text selection has ended. After the text selection
+  // has ended, a small icon should show up that the user can click to
+  // add a new parameter.
+  const handleSelect = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    const start = (e.target as HTMLTextAreaElement).selectionStart;
+    const end = (e.target as HTMLTextAreaElement).selectionEnd;
+    const selectedText = code.substring(start, end);
+    setHighlightedText(
+      selectedText.length > 0
+        ? {
+            text: selectedText,
+            position: { start, end },
+          }
+        : undefined,
+    );
+  };
+
+  // Opens the confirmation popoup for adding a new highlight
+  const handleOpenConfirmationPopup = () => {
+    setConfirmationPopup(true);
+  };
 
   // When the user edits the code inside the text area, we need to make sure
   // to update the positions of the highlights in each of the parameters to match
@@ -340,6 +373,7 @@ export const useTemplateBuilderPageHooks = () => {
     closeTemplateCreatedPopup,
     handleCodeChange,
     handleCopyTemplateScriptToClipboard,
+    handleOpenConfirmationPopup,
   };
 };
 
