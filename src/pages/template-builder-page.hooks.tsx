@@ -181,7 +181,7 @@ export const useTemplateBuilderPageHooks = () => {
             style={{
               background: highlight.color,
             }}
-            className="absolute top-0 -left-0.5 -z-10 h-full w-[calc(100%+4px)] rounded"
+            className="absolute -top-0.5 -left-0.5 -z-10 h-full w-[calc(100%+4px)] rounded"
           />
           {code.substring(highlight.position.start, highlight.position.end)}
         </span>,
