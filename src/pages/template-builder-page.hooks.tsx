@@ -267,28 +267,36 @@ export const useTemplateBuilderPageHooks = () => {
   //      position of the first difference between the original and the new text should
   //      suffice
   // With that information, we need to find all the tokens after the first difference (or within
-  // distance based on the difference of characters) and subtract the difference of characters
+  // distance based on the difference of characters) and subtract the difference of characters.
+  // We also will need to update the text in the parameter to match the text that is being highlighted
   const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newCode = e.target.value;
     const differenceOfCharacters = newCode.length - code.length;
     const firstDifferenceIndex = findFirstDifference(code, newCode);
     const newParameters = parameters.map((parameter) => ({
       ...parameter,
-      selections: parameter.selections.map((selection) => ({
-        ...selection,
-        position: {
+      selections: parameter.selections.map((selection) => {
+        const newPosition = {
           start:
             selection.position.start > firstDifferenceIndex
               ? selection.position.start + differenceOfCharacters
               : selection.position.start,
           end:
+            //splitting > and >= because when we append to the end, we want to add
+            // the character to the highlight, but when we subtract the character after
+            // the highlight, we don't want to reduce the size of the highlight
             selection.position.end > firstDifferenceIndex ||
             (selection.position.end >= firstDifferenceIndex &&
               differenceOfCharacters > 0)
               ? selection.position.end + differenceOfCharacters
               : selection.position.end,
-        },
-      })),
+        };
+        return {
+          ...selection,
+          text: newCode.substring(newPosition.start, newPosition.end),
+          position: newPosition,
+        };
+      }),
     }));
     setParameters(newParameters);
     setCode(e.target.value);
