@@ -6,6 +6,7 @@ import type {
   TextSelection,
   TextSelectionPosition,
 } from "./template-builder-page.types";
+import { findFirstDifference } from "./template-builder-page.utils";
 
 export const useTemplateBuilderPageHooks = () => {
   const [code, setCode] = useState(`<div className="flex h-screen w-screen">
@@ -239,12 +240,6 @@ export const useTemplateBuilderPageHooks = () => {
     };
   };
 
-  const copyTemplateScriptToClipboard = async () => {
-    if (template) {
-      await navigator.clipboard.writeText(template.script);
-    }
-  };
-
   const openTemplateCreatedPopup = () => {
     const generatedTemplate = generateTemplateScript();
     setTemplate(generatedTemplate);
@@ -256,6 +251,36 @@ export const useTemplateBuilderPageHooks = () => {
     setTemplate(undefined);
     setTemplateCreatedPopup(false);
   };
+
+  //Handlers
+  //-----------------------------------------------------------------------
+
+  // When the user edits the code inside the text area, we need to make sure
+  // to update the positions of the highlights in each of the parameters to match
+  // the new length of the input.
+  // To achieve this, we need 2 pieces of information:
+  // * Ammount of characters added/deleted
+  //    * To achieve this, we can subtract the length of the new value by the stored text
+  //      (positive means characters were added, negative subtracted)
+  // * Position of characters added/deleted
+  //    * Since only one part of the text can be modified at each time, checking the
+  //      position of the first difference between the original and the new text should
+  //      suffice
+  const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newCode = e.target.value;
+    const differenceOfCharacters = newCode.length - code.length;
+    const firstDifferenceIndex = findFirstDifference(code, newCode);
+    console.log(differenceOfCharacters, firstDifferenceIndex);
+    setCode(e.target.value);
+  };
+
+  const handleCopyTemplateScriptToClipboard = async () => {
+    if (template) {
+      await navigator.clipboard.writeText(template.script);
+    }
+  };
+
+  //-----------------------------------------------------------------------
 
   return {
     code,
@@ -273,7 +298,8 @@ export const useTemplateBuilderPageHooks = () => {
     templateCreatedPopup,
     openTemplateCreatedPopup,
     closeTemplateCreatedPopup,
-    copyTemplateScriptToClipboard,
+    handleCodeChange,
+    handleCopyTemplateScriptToClipboard,
   };
 };
 

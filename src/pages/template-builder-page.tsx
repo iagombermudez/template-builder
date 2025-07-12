@@ -6,7 +6,7 @@ import {
 export const TemplateBuilderPage = () => {
   const {
     code,
-    setCode,
+    handleCodeChange,
     parameters,
     confirmationPopup,
     handleSelect,
@@ -18,7 +18,7 @@ export const TemplateBuilderPage = () => {
     templateCreatedPopup,
     openTemplateCreatedPopup,
     closeTemplateCreatedPopup,
-    copyTemplateScriptToClipboard,
+    handleCopyTemplateScriptToClipboard,
   } = useTemplateBuilderPageHooks();
 
   const { syncScroll, synchingElementRef } = useSynchronizeScrolls();
@@ -59,7 +59,7 @@ export const TemplateBuilderPage = () => {
             <textarea
               value={code}
               onScroll={syncScroll}
-              onChange={(e) => setCode(e.target.value)}
+              onChange={handleCodeChange}
               onSelect={handleSelect}
               className="mb-8 min-h-[700px] w-[1000px] overflow-auto rounded-2xl border border-gray-400 p-8 font-mono text-nowrap text-white"
             />
@@ -122,7 +122,7 @@ export const TemplateBuilderPage = () => {
               <button
                 type="button"
                 className="absolute top-2 right-2 h-fit w-fit cursor-pointer rounded border border-[#333333] bg-[#0C0C0C] p-2 text-white hover:border-white"
-                onClick={copyTemplateScriptToClipboard}
+                onClick={handleCopyTemplateScriptToClipboard}
               >
                 Copy to clipboard
               </button>
