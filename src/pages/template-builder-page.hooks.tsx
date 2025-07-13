@@ -182,7 +182,6 @@ export const useTemplateBuilderPageHooks = () => {
         highlight.position.start,
         highlight.position.end,
       );
-      console.log(textToHighlight);
       switch (highlight.type) {
         case "existing-parameter":
           nodes.push(

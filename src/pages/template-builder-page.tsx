@@ -22,7 +22,7 @@ export const TemplateBuilderPage = () => {
   } = useTemplateBuilderPageHooks();
 
   // Variable use to toggle between showin the textarea text or the highlights text
-  const debugMode = true;
+  const debugMode = false;
 
   const { syncScroll, synchingElementRef } = useSynchronizeScrolls();
 

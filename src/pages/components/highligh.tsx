@@ -18,7 +18,7 @@ export const Highlight = (props: {
         }}
         className="absolute -top-0.5 -left-0.5 -z-10 h-full w-[calc(100%+4px)] rounded"
       />
-      ) {text}
+      {text}
     </span>
   );
 };
