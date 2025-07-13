@@ -8,7 +8,7 @@ import type {
   TextSelectionPosition,
 } from "./template-builder-page.types";
 import { findFirstDifference } from "./template-builder-page.utils";
-import { AddHighlightButton } from "./components/add-highlight-button";
+import { HighlightButton } from "./components/highlight-button";
 
 export const useTemplateBuilderPageHooks = () => {
   const [code, setCode] = useState(`<div className="flex h-screen w-screen">
@@ -203,7 +203,8 @@ export const useTemplateBuilderPageHooks = () => {
           break;
         case "potential-parameter": {
           nodes.push(
-            <AddHighlightButton
+            <HighlightButton
+              type="add"
               text={textToHighlight}
               onClick={handleOpenConfirmationPopup}
             />,

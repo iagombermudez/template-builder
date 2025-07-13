@@ -1,4 +1,5 @@
 import type { HexColor } from "../template-builder-page.types";
+import { HighlightButton } from "./highlight-button";
 
 export const Highlight = (props: {
   key: string;
@@ -18,7 +19,11 @@ export const Highlight = (props: {
         }}
         className="absolute -top-0.5 -left-0.5 -z-10 h-full w-[calc(100%+4px)] rounded"
       />
-      {text}
+      <HighlightButton
+        type="remove"
+        text={text}
+        onClick={() => console.log("clicked")}
+      />
     </span>
   );
 };
