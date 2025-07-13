@@ -159,7 +159,16 @@ export const useTemplateBuilderPageHooks = () => {
     );
 
     // Add the current text highlighted by the user in order to show the 'add highlight button'
-    if (highlightedText) {
+    // It should only be added if no other chunk is highlighted in the selected area
+    if (
+      highlightedText &&
+      highlights.every(
+        (h) =>
+          (highlightedText.position.start <= h.position.start &&
+            highlightedText.position.end <= h.position.start) ||
+          highlightedText.position.start >= h.position.end,
+      )
+    ) {
       highlights.push({
         type: "potential-parameter",
         position: highlightedText.position,
