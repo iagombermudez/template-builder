@@ -203,8 +203,10 @@ export const useTemplateBuilderPageHooks = () => {
           break;
         case "potential-parameter": {
           nodes.push(
-            <AddHighlightButton onClick={handleOpenConfirmationPopup} />,
-            textToHighlight,
+            <AddHighlightButton
+              text={textToHighlight}
+              onClick={handleOpenConfirmationPopup}
+            />,
           );
           break;
         }
