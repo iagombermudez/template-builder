@@ -10,7 +10,7 @@ export const TemplateBuilderPage = () => {
     parameters,
     confirmationPopup,
     handleSelect,
-    highlightedText,
+    newHighlight,
     buildHighlightedCode,
     confirmAddNewChunk,
     cancelConfirmation,
@@ -81,8 +81,8 @@ export const TemplateBuilderPage = () => {
           <div className="rounded-2xl border border-[#333333] bg-[#0C0C0C] px-16 py-8">
             <h3 className="mb-2">
               Would you like to add{" "}
-              <span className="font-bold italic">{highlightedText?.text}</span>{" "}
-              as a parameter?
+              <span className="font-bold italic">{newHighlight?.text}</span> as
+              a parameter?
             </h3>
             <ul className="mb-4 ml-4 list-disc">
               {parameters.map((_, i) => (

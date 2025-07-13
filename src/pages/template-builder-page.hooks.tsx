@@ -37,9 +37,9 @@ export const useTemplateBuilderPageHooks = () => {
         </section>
       </div>`);
 
-  const [highlightedText, setHighlightedText] = useState<
-    TextSelection | undefined
-  >(undefined);
+  const [newHighlight, setNewHighlight] = useState<TextSelection | undefined>(
+    undefined,
+  );
   const [parameters, setParameters] = useState<Array<BuilderParameter>>([]);
 
   const [confirmationPopup, setConfirmationPopup] = useState<boolean>(false);
@@ -59,9 +59,9 @@ export const useTemplateBuilderPageHooks = () => {
   // Finally, we need to reset the highlighted text
   // as well as closing the popup
   const confirmAddNewChunk = (parameterIndex?: number) => {
-    if (!highlightedText) return;
+    if (!newHighlight) return;
     try {
-      const newParameters = buildNewParameters(parameterIndex, highlightedText);
+      const newParameters = buildNewParameters(parameterIndex, newHighlight);
       setParameters(newParameters);
     } catch (error) {
       console.error(error);
@@ -70,7 +70,7 @@ export const useTemplateBuilderPageHooks = () => {
       }
     } finally {
       //Reset the highlighted text and close the popup
-      setHighlightedText(undefined);
+      setNewHighlight(undefined);
       setConfirmationPopup(false);
     }
   };
@@ -119,7 +119,7 @@ export const useTemplateBuilderPageHooks = () => {
   // When we choose not to add the highlighted text to the list of tokens
   // we should reset the highlighted text and close the popup
   const cancelConfirmation = () => {
-    setHighlightedText(undefined);
+    setNewHighlight(undefined);
     setConfirmationPopup(false);
   };
 
@@ -161,17 +161,17 @@ export const useTemplateBuilderPageHooks = () => {
     // Add the current text highlighted by the user in order to show the 'add highlight button'
     // It should only be added if no other chunk is highlighted in the selected area
     if (
-      highlightedText &&
+      newHighlight &&
       highlights.every(
         (h) =>
-          (highlightedText.position.start <= h.position.start &&
-            highlightedText.position.end <= h.position.start) ||
-          highlightedText.position.start >= h.position.end,
+          (newHighlight.position.start <= h.position.start &&
+            newHighlight.position.end <= h.position.start) ||
+          newHighlight.position.start >= h.position.end,
       )
     ) {
       highlights.push({
         type: "potential-parameter",
-        position: highlightedText.position,
+        position: newHighlight.position,
       });
     }
 
@@ -286,7 +286,7 @@ export const useTemplateBuilderPageHooks = () => {
     const start = (e.target as HTMLTextAreaElement).selectionStart;
     const end = (e.target as HTMLTextAreaElement).selectionEnd;
     const selectedText = code.substring(start, end);
-    setHighlightedText(
+    setNewHighlight(
       selectedText.length > 0
         ? {
             text: selectedText,
@@ -376,7 +376,7 @@ export const useTemplateBuilderPageHooks = () => {
     confirmationPopup,
     confirmAddNewChunk,
     cancelConfirmation,
-    highlightedText,
+    newHighlight,
     buildHighlightedCode,
     handleSelect,
     generateTemplateScript,
