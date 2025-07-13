@@ -7,7 +7,7 @@ export const Highlight = (props: {
 }) => {
   const { text, key, color } = props;
   return (
-    <span key={key} className="relative">
+    <span key={key} className="relative inline-block">
       {/* This div is used to add the highlight color. This is necessary because we are 
       adding a little bit of padding to the highlight. If it was added directly in the span,
               the text position would be affected
