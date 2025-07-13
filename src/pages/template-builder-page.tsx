@@ -21,6 +21,9 @@ export const TemplateBuilderPage = () => {
     handleCopyTemplateScriptToClipboard,
   } = useTemplateBuilderPageHooks();
 
+  // Variable use to toggle between showin the textarea text or the highlights text
+  const debugMode = true;
+
   const { syncScroll, synchingElementRef } = useSynchronizeScrolls();
 
   return (
@@ -52,7 +55,7 @@ export const TemplateBuilderPage = () => {
           <div className="relative flex gap-4">
             <div
               ref={synchingElementRef}
-              className="pointer-events-none absolute h-[700px] w-[1000px] overflow-auto rounded-2xl border border-gray-400 p-8 font-mono whitespace-pre text-transparent"
+              className={`pointer-events-none absolute h-[700px] w-[1000px] overflow-auto rounded-2xl border border-gray-400 p-8 font-mono whitespace-pre ${debugMode ? "text-yellow-500" : "text-transparent"}`}
             >
               {buildHighlightedCode()}
             </div>
@@ -61,7 +64,7 @@ export const TemplateBuilderPage = () => {
               onScroll={syncScroll}
               onChange={handleCodeChange}
               onSelect={handleSelect}
-              className="mb-8 min-h-[700px] w-[1000px] overflow-auto rounded-2xl border border-gray-400 p-8 font-mono text-nowrap text-white"
+              className={`mb-8 min-h-[700px] w-[1000px] overflow-auto rounded-2xl border border-gray-400 p-8 font-mono text-nowrap ${debugMode ? "text-transparent" : "text-white"}`}
             />
           </div>
         </section>

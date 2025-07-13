@@ -178,24 +178,25 @@ export const useTemplateBuilderPageHooks = () => {
       }
 
       // Append the highlight (or show add highlight button)
-      const highlightText = code.substring(
+      const textToHighlight = code.substring(
         highlight.position.start,
         highlight.position.end,
       );
+      console.log(textToHighlight);
       switch (highlight.type) {
         case "existing-parameter":
           nodes.push(
             <Highlight
               key={`highlight-${highlight.position.start}`}
               color={highlight.color}
-              text={highlightText}
+              text={textToHighlight}
             />,
           );
           break;
         case "potential-parameter": {
           nodes.push(
             <AddHighlightButton onClick={handleOpenConfirmationPopup} />,
-            highlightText,
+            textToHighlight,
           );
           break;
         }
