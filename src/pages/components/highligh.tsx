@@ -5,8 +5,9 @@ export const Highlight = (props: {
   key: string;
   text: string;
   color: HexColor;
+  removeHighlight: () => void;
 }) => {
-  const { text, key, color } = props;
+  const { text, key, color, removeHighlight } = props;
   return (
     <span key={key} className="relative inline-block">
       {/* This div is used to add the highlight color. This is necessary because we are 
@@ -19,11 +20,7 @@ export const Highlight = (props: {
         }}
         className="absolute -top-0.5 -left-0.5 -z-10 h-full w-[calc(100%+4px)] rounded"
       />
-      <HighlightButton
-        type="remove"
-        text={text}
-        onClick={() => console.log("clicked")}
-      />
+      <HighlightButton type="remove" text={text} onClick={removeHighlight} />
     </span>
   );
 };

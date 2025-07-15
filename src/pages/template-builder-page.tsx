@@ -49,9 +49,10 @@ export const TemplateBuilderPage = () => {
           <h1 className="mb-8 text-3xl font-semibold text-white">
             AI Template Builder
           </h1>
-          <h2 className="text-lg text-white">
-            Paste your code, highlight the names you would like to parameterize
-            and BOOM!
+          <h2 className="mb-4 text-lg text-white">
+            Paste your code,{" "}
+            <span className="bg-yellow-500">highlight the text</span> that you
+            would like to parameterize and BOOM!
           </h2>
           <div className="relative flex gap-4">
             <div
@@ -85,27 +86,31 @@ export const TemplateBuilderPage = () => {
               <span className="font-bold italic">{newHighlight?.text}</span> as
               a parameter?
             </h3>
-            <ul className="mb-4 ml-4 list-disc">
-              {parameters.map((_, i) => (
+            <ul className="mb-2 flex gap-2">
+              {parameters.map((p, i) => (
                 <li
-                  className="cursor-pointer"
+                  style={{
+                    background: `${p.color}`,
+                  }}
+                  className="w-fit cursor-pointer rounded border-2 border-transparent px-1 py-0.5 font-semibold text-white hover:border-white"
                   onClick={() => confirmAddNewChunk(i)}
                 >
-                  Parameter ${i}
+                  Parameter ${i + 1}
                 </li>
               ))}
-              <li
-                className="cursor-pointer"
-                onClick={() => confirmAddNewChunk()} //Not passing the parameter index, since we are creating a new parameter
-              >
-                New Parameter
-              </li>
             </ul>
             <div className="flex w-full items-center justify-center gap-4">
               <button
+                className="h-10 w-32 cursor-pointer rounded bg-white text-black hover:bg-gray-300"
+                type="button"
+                onClick={() => confirmAddNewChunk()} //Not passing the parameter index, since we are creating a new parameter
+              >
+                New Parameter
+              </button>{" "}
+              <button
                 type="button"
                 onClick={cancelConfirmation}
-                className="h-10 w-28 cursor-pointer rounded border border-[#333333] bg-[#0C0C0C] text-white hover:border-white"
+                className="h-10 w-32 cursor-pointer rounded border border-[#333333] bg-[#0C0C0C] text-white hover:border-white"
               >
                 Cancel
               </button>

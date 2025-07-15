@@ -145,17 +145,22 @@ export const useTemplateBuilderPageHooks = () => {
       type: "existing-parameter";
       color: HexColor;
       position: TextSelectionPosition;
+      parameterIndex: number;
+      selectionIndex: number;
     };
     type PotencialParameterHighlight = {
       type: "potential-parameter";
       position: TextSelectionPosition;
     };
-    const highlights: Array<ParameterHighlight> = parameters.flatMap((p) =>
-      p.selections.map((s) => ({
-        type: "existing-parameter",
-        color: p.color,
-        position: s.position,
-      })),
+    const highlights: Array<ParameterHighlight> = parameters.flatMap(
+      (p, parameterIndex) =>
+        p.selections.map((s, selectionIndex) => ({
+          type: "existing-parameter",
+          parameterIndex,
+          selectionIndex,
+          color: p.color,
+          position: s.position,
+        })),
     );
 
     // Add the current text highlighted by the user in order to show the 'add highlight button'
@@ -198,6 +203,12 @@ export const useTemplateBuilderPageHooks = () => {
               key={`highlight-${highlight.position.start}`}
               color={highlight.color}
               text={textToHighlight}
+              removeHighlight={() =>
+                handleRemoveHighlight(
+                  highlight.parameterIndex,
+                  highlight.selectionIndex,
+                )
+              }
             />,
           );
           break;
@@ -361,6 +372,22 @@ export const useTemplateBuilderPageHooks = () => {
 
     setParameters(newParameters);
     setCode(e.target.value);
+  };
+
+  const handleRemoveHighlight = (
+    parameterIndex: number,
+    selectionIndex: number,
+  ) => {
+    setParameters(
+      parameters.map((p, i) => ({
+        ...p,
+        selections: p.selections.filter(
+          (_, j) =>
+            i !== parameterIndex || //This is added so it doesn't delete a selection from a different parameter
+            j !== selectionIndex,
+        ),
+      })),
+    );
   };
 
   const handleCopyTemplateScriptToClipboard = async () => {
